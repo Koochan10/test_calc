@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>給料計算ツール</title>
+    <style>
+        body { font-family: sans-serif; margin: 30px; }
+        label { display: block; margin-top: 15px; }
+        input[type="number"] { width: 100px; }
+        .result { margin-top: 20px; font-weight: bold; }
+        .section { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h2>給料計算ツール</h2>
+
+    <label>シフト時間（時間）: <input type="number" id="shiftHours" /></label>
+    <label>深夜時間（時間）: <input type="number" id="nightHours" /></label>
+
+    <button onclick="calculate()">計算する</button>
+
+    <div class="section result" id="results"></div>
+
+    <script>
+        function calculate() {
+            const baseSalary = 266286;
+            const shiftHours = parseFloat(document.getElementById("shiftHours").value);
+            const nightHours = parseFloat(document.getElementById("nightHours").value);
+
+            if (isNaN(shiftHours) || isNaN(nightHours)) {
+                document.getElementById("results").innerText = "両方の時間を入力してください。";
+                return;
+            }
+
+            const fixedAmount = nightHours >= 20 ? 13000 : 3000;
+
+            const shiftAllowance = fixedAmount + 450 * shiftHours;
+            const nightAllowance = ((baseSalary + fixedAmount) / 120) * nightHours * 0.25;
+            const total = baseSalary + shiftAllowance + nightAllowance;
+
+            document.getElementById("results").innerHTML =
+                `<div>■ 基本給：${baseSalary.toLocaleString()} 円</div>` +
+                `<div>■ 固定額：${fixedAmount.toLocaleString()} 円（深夜${nightHours}時間 → ${nightHours >= 20 ? "13,000円" : "3,000円"}）</div>` +
+                `<div>■ シフト手当：${Math.round(shiftAllowance).toLocaleString()} 円</div>` +
+                `<div>■ 夜勤手当：${Math.round(nightAllowance).toLocaleString()} 円</div>` +
+                `<br><div style="font-size: 1.2em;">◎ 総支給額：${Math.round(total).toLocaleString()} 円</div>`;
+        }
+    </script>
+</body>
+</html>
